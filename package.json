@@ -1,6 +1,6 @@
 {
   "name": "@ghasemkiani/thorchain",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Utility for working with the THORChain blockchain",
   "type": "module",
   "main": "index.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/ghasemkiani/thorchin.git"
+    "url": "git+https://github.com/ghasemkiani/thorchin.git"
   },
   "keywords": [
     "blockchain",
@@ -19,9 +19,9 @@
   "author": "Ghasem Kiani",
   "license": "MIT",
   "bugs": {
-    "url": "https://gitlab.com/ghasemkiani/thorchin/issues"
+    "url": "https://github.com/ghasemkiani/thorchin/issues"
   },
-  "homepage": "https://gitlab.com/ghasemkiani/thorchin#readme",
+  "homepage": "https://github.com/ghasemkiani/thorchin#readme",
   "dependencies": {
     "@ghasemkiani/base": "github:ghasemkiani/base",
     "@xchainjs/xchain-thorchain": "^0.19.4",
