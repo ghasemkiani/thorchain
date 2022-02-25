@@ -16,7 +16,8 @@ class Account extends Obj {
 		this._util = util;
 	}
 	get client() {
-		if (!this._client && this.mnemonic) {
+		if (!this._client) {
+			// this.mnemonic may be null
 			this._client = new Client({network: this.util.network, phrase: this.mnemonic});
 		}
 		return this._client;
@@ -25,7 +26,7 @@ class Account extends Obj {
 		this._client = client;
 	}
 	get address() {
-		if (!this._address && this.client) {
+		if (!this._address && this.mnemonic) {
 			let {index} = this;
 			this._address = this.client.getAddress(index);
 		}
@@ -35,7 +36,7 @@ class Account extends Obj {
 		this._address = address;
 	}
 	get key() {
-		if (!this._key && this.client) {
+		if (!this._key && this.mnemonic) {
 			this._key = this.client.getPrivKey().toBuffer().toString("hex");
 		}
 		return this._key;
@@ -44,7 +45,7 @@ class Account extends Obj {
 		this._key = key;
 	}
 	get pub() {
-		if (!this._pub && this.client) {
+		if (!this._pub && this.mnemonic) {
 			this._pub = this.client.getPubKey().toBuffer().toString("hex");
 		}
 		return this._pub;
