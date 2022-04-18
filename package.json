@@ -1,6 +1,6 @@
 {
   "name": "@ghasemkiani/thorchain",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Utility for working with the THORChain blockchain",
   "type": "module",
   "main": "index.js",
@@ -24,7 +24,7 @@
   "homepage": "https://github.com/ghasemkiani/thorchin#readme",
   "dependencies": {
     "@ghasemkiani/base": "github:ghasemkiani/base",
-    "@xchainjs/xchain-thorchain": "^0.19.4",
-    "bignumber.js": "^9.0.1"
+    "@xchainjs/xchain-thorchain": "^0.24.0",
+    "bignumber.js": "^9.0.2"
   }
 }
