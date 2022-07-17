@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import {Client} from "@xchainjs/xchain-thorchain";
+import {Client, getChainIds, getDefaultClientUrl} from "@xchainjs/xchain-thorchain";
 
 import {cutil} from "@ghasemkiani/base";
 import {Obj} from "@ghasemkiani/base";
@@ -18,7 +18,10 @@ class Account extends Obj {
 	get client() {
 		if (!this._client) {
 			// this.mnemonic may be null
-			this._client = new Client({network: this.util.network, phrase: this.mnemonic});
+			let chainIds = this.util.chainIds; // must have called util.toInit() before
+			let network = this.util.network;
+			let phrase = this.mnemonic;
+			this._client = new Client({chainIds, network, phrase});
 		}
 		return this._client;
 	}
