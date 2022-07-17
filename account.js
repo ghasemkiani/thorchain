@@ -71,6 +71,9 @@ class Account extends Obj {
 		}
 		return this._balances;
 	}
+	get balance() {
+		return this.balances["THOR.RUNE"];
+	}
 	async toGetTransactions() {
 		let {address} = this;
 		this.txs = await this.client.getTransactions({address});
