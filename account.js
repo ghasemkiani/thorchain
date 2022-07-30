@@ -40,7 +40,8 @@ class Account extends Obj {
 	}
 	get key() {
 		if (!this._key && this.mnemonic) {
-			this._key = this.client.getPrivKey().toBuffer().toString("hex");
+			let {index} = this;
+			this._key = this.client.getPrivateKey(index).key.toString("hex");
 		}
 		return this._key;
 	}
@@ -49,7 +50,8 @@ class Account extends Obj {
 	}
 	get pub() {
 		if (!this._pub && this.mnemonic) {
-			this._pub = this.client.getPubKey().toBuffer().toString("hex");
+			let {index} = this;
+			this._pub = Buffer.from(this.client.getPubKey(index).key).toString("hex");
 		}
 		return this._pub;
 	}
