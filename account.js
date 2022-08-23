@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import {Client, getChainIds, getDefaultClientUrl} from "@xchainjs/xchain-thorchain";
+import {Client} from "@xchainjs/xchain-thorchain";
 
 import {cutil} from "@ghasemkiani/base";
 import {Obj} from "@ghasemkiani/base";
