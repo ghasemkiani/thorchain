@@ -1,25 +1,28 @@
-import {Client, getChainIds, getDefaultClientUrl} from "@xchainjs/xchain-thorchain";
+import {Client} from "@xchainjs/xchain-thorchain";
 
 import {cutil} from "@ghasemkiani/base";
 import {Obj} from "@ghasemkiani/base";
 
 class Util extends Obj {
-	async toInit() {
-		if (!this.chainIds) {
-			this.chainIds = await getChainIds(getDefaultClientUrl());
-		}
-	}
-	async toCreateClient(arg) {
-		await this.toInit();
-		let chainIds = this.chainIds;
-		let network = this.network;
-		let client = new Client({chainIds, network, ...arg});
+	createClient(arg) {
+		let util = this;
+		let {network} = util;
+		let {urlNode: node} = util;
+		let {urlRpc: rpc} = util;
+		let client = new Client({
+			network,
+			clientUrl: {
+				[network]: {node, rpc},
+			},
+			...arg,
+		});
 		return client;
 	}
 }
 cutil.extend(Util.prototype, {
-	chainIds: null,
-	network: "mainnet", // or "testnet"
+	network: "mainnet", // or "stagenet"
+	urlNode: "https://thornode.ninerealms.com",
+	urlRpc: "https://rpc.ninerealms.com",
 });
 
 const util = new Util();

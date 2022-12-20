@@ -1,11 +1,29 @@
-import BigNumber from "bignumber.js";
-import {Client} from "@xchainjs/xchain-thorchain";
+import d from "decimal.js";
+import core from "@cosmos-client/core";
+const {default: cosmosclient} = core;
 
 import {cutil} from "@ghasemkiani/base";
 import {Obj} from "@ghasemkiani/base";
 import {util} from "./util.js";
+import {Client as ClientMidgard} from "@ghasemkiani/midgard-api";
 
 class Account extends Obj {
+	static {
+		cutil.extend(this.prototype, {
+			_util: null,
+			mnemonic: null,
+			index: 0,
+			_client: null,
+			_midgard: null,
+			_address: null,
+			_key: null,
+			_pub: null,
+			_balances: null,
+			balances_: null,
+			balances: null,
+			txs: null,
+		});
+	}
 	get util() {
 		if (!this._util) {
 			this._util = util;
@@ -18,20 +36,32 @@ class Account extends Obj {
 	get client() {
 		if (!this._client) {
 			// this.mnemonic may be null
-			let chainIds = this.util.chainIds; // must have called util.toInit() before
-			let network = this.util.network;
 			let phrase = this.mnemonic;
-			this._client = new Client({chainIds, network, phrase});
+			this._client = this.util.createClient({phrase});
 		}
 		return this._client;
 	}
 	set client(client) {
 		this._client = client;
 	}
+	get midgard() {
+		if (!this._midgard) {
+			this._midgard = new ClientMidgard();
+		}
+		return this._midgard;
+	}
+	set midgard(midgard) {
+		this._midgard = midgard;
+	}
 	get address() {
-		if (!this._address && this.mnemonic) {
-			let {index} = this;
-			this._address = this.client.getAddress(index);
+		if (!this._address) {
+			if (this.mnemonic) {
+				let {index} = this;
+				this._address = this.client.getAddress(index);
+			} else if (this.key) {
+				let {key} = this;
+				this._address = this.client.cosmosClient.getAddressFromPrivKey(new cosmosclient.proto.cosmos.crypto.secp256k1.PrivKey({key: Uint8Array.from(Buffer.from(key, "hex"))}));
+			}
 		}
 		return this._address;
 	}
@@ -67,11 +97,27 @@ class Account extends Obj {
 			let key = `${chain}.${symbol}`;
 			let value_ = amount.amount().toString();
 			let {decimal} = amount;
-			let value = new BigNumber(value_).multipliedBy(new BigNumber(10).pow(-decimal)).toNumber();
+			let value = d(value_).div(d(10).pow(decimal)).toNumber();
 			this.balances[key] = value;
 			this.balances_[key] = value_;
 		}
 		return this._balances;
+	}
+	async toGetBalance_() {
+		let account = this;
+		let {address} = account;
+		let balance_ = await account.midgard.toGetBalance_(address);
+		let balance = await account.midgard.toGetBalance(address);
+		account.balances_ ||= {};
+		account.balances ||= {};
+		account.balances_["THOR.RUNE"] = balance_;
+		account.balances["THOR.RUNE"] = balance;
+		return balance_;
+	}
+	async toGetBalance() {
+		let account = this;
+		await account.toGetBalance_();
+		return account.balances["THOR.RUNE"];
 	}
 	get balance() {
 		return this.balances["THOR.RUNE"];
@@ -83,22 +129,9 @@ class Account extends Obj {
 	}
 	async toGetTransaction(hash) {
 		let {address} = this;
-		let tx = await this.client.getTransaction(hash, address);
+		let tx = await this.client.getTransactionData(hash, address);
 		return tx;
 	}
 }
-cutil.extend(Account.prototype, {
-	_util: null,
-	mnemonic: null,
-	index: 0,
-	_client: null,
-	_address: null,
-	_key: null,
-	_pub: null,
-	_balances: null,
-	balances_: null,
-	balances: null,
-	txs: null,
-});
 
 export {Account};
